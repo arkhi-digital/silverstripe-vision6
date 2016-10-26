@@ -15,7 +15,7 @@ Run `/dev/build` afterwards for SilverStripe to become aware of this extension
 Visit `/dev/tasks` and run the `Synchronize Vision6 Lists` and `Synchronize Vision6 Fields` tasks in that order (won't be required in future, will intelligently sync when required)
 
 
-# Short Code
+## Short Code
 To include a subscriber form on any given page from within the CMS you will need to use the shortcode below:
 
 **Code:**
@@ -25,7 +25,7 @@ To include a subscriber form on any given page from within the CMS you will need
 
 **Note**: Change `<<<YOUR LIST ID>>>` to the ID of the form you want to display. See [Finding my List ID](#finding-my-list-id)
 
-# Template Syntax
+## Template Syntax
 Within an .SS template you can invoke a list in a similar way you would for the shortcode
 
 **Code:**
@@ -35,7 +35,7 @@ $Vision6List(<<<YOUR LIST ID>>>);
 
 **Note**: Change `<<<YOUR LIST ID>>>` to the ID of the form you want to display. See [Finding my List ID](#finding-my-list-id)
 
-# Finding my List ID
+## Finding my List ID
 
 1. Login to Vision6 dashboard and select "Lists and Forms" from the side menu
 2. Find the list you want the ID for and click the "Edit" button
