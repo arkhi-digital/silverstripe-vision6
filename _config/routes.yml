@@ -1,0 +1,6 @@
+Name: vision6routes
+After: framework/routes#coreroutes
+---
+Director:
+  rules:
+    'vision6//$Action/$ID/$Name': 'Vision6Ext'

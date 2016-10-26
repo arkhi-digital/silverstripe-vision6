@@ -1,0 +1,10 @@
+---
+Name: vision6
+After:
+  - 'framework/*'
+  - 'cms/*'
+---
+
+Vision6:
+  auth:
+    api_key:
