@@ -18,7 +18,7 @@ class Vision6PageController extends Page_Controller
 	/**
 	 * The default action for Vision6::singleton()->createForm()
 	 */
-	public function subscribe($data)
+	public function subscribe($data, $form)
 	{
 		if (!$this->request->isPOST()) {
 			user_error('You have reached this page incorrectly, data must be posted.', E_USER_ERROR);
