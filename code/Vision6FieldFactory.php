@@ -252,4 +252,19 @@ class Vision6FieldFactory extends Object
 
 		return RequiredFields::create($required);
 	}
+	
+	public function addSessionMessageFor($listId, $message) {
+		$jar = Vision6::singleton()->getSession();
+		$jar[$listId] = $message;
+		Vision6::singleton()->setSession($jar);
+	}
+
+	public function getSessionMessage($listId) {
+		$jar = Vision6::singleton()->getSession();
+		$result = (isset($jar[$listId])) ? $jar[$listId] : false;
+		$jar[$listId] = false;
+		Vision6::singleton()->setSession($jar);
+
+		return $result;
+	}
 }

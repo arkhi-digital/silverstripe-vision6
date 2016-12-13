@@ -63,4 +63,27 @@ class Vision6 extends Object {
 
 		return (!empty($contacts));
 	}
+
+	/**
+	 * Gets the session container or creates it if it doesn't exist.
+	 *
+	 * @return array|mixed|null|\Session
+	 */
+	public function getSession()
+	{
+		return \Session::get('Vision6') ?: (\Session::set('Vision6', array())) ?: \Session::get('Vision6');
+	}
+
+	/**
+	 * Sets the session container
+	 *
+	 * @param array $data
+	 *
+	 * @return void
+	 */
+	public function setSession(array $data)
+	{
+		\Session::set('Vision6', $data);
+		\Session::save();
+	}
 }

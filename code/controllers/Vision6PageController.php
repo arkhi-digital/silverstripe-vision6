@@ -18,7 +18,7 @@ class Vision6PageController extends Page_Controller
 	/**
 	 * The default action for Vision6::singleton()->createForm()
 	 */
-	public function subscribe($data, $form)
+	public function subscribe()
 	{
 		if (!$this->request->isPOST()) {
 			user_error('You have reached this page incorrectly, data must be posted.', E_USER_ERROR);
@@ -29,21 +29,39 @@ class Vision6PageController extends Page_Controller
 		$payload = $this->normalizeFormData($this->request->postVars());
 		$listId = array_shift($payload);
 
-		if (Vision6::singleton()->isEmailInList($listId, $payload['Email'])) {
-			$form->addErrorMessage('Email', 'This email has already been subscribed');
+		if ((isset($payload['Email']) && strlen($payload['Email'])) && Vision6::singleton()->isEmailInList($listId, $payload['Email'])) {
+			Vision6FieldFactory::singleton()->addSessionMessageFor($listId, 'That email is already subscribed');
+			$this->redirectBack();
 		}
 
 		$api->invokeMethod("subscribeContact", (int)$listId, $payload);
 
 		if ($api->hasError()) {
 			// unsuccessful
+			if (Director::isDev()) {
+				user_error('There was an error: ' . $api->getErrorMessage(), E_USER_ERROR);
+			}
+
+			Vision6FieldFactory::singleton()->addSessionMessageFor($listId, 'We have encountered an error and you have not been subscribed.');
+			$this->redirectBack();
 		}
 
 		if (!$api->hasError()) {
 			// successful
+			Vision6FieldFactory::singleton()->addSessionMessageFor($listId, 'You have successfully subscribed to this mailing list');
+			$this->redirectBack();
 		}
 
 		$this->redirectBack();
+	}
+
+	/**
+	 * Would you like to submit a PR? :))
+	 */
+	public function redirectBack()
+	{
+		header('Location: ' . $_SERVER['HTTP_REFERER']);
+		die();
 	}
 
 	/**

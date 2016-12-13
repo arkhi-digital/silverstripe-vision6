@@ -14,7 +14,16 @@ class Vision6PageControllerExtension extends Extension
 	{
 		$factory = Vision6FieldFactory::create();
 		$factory->setList($listId);
-		return Vision6::singleton()->createForm('subscribe', $factory->build(), null, $factory->getRequired());
+		$template = str_replace("%s", DIRECTORY_SEPARATOR, __DIR__ . '%s..%s..%stemplates%sVision6Form.ss');
+
+		return Page_Controller::singleton()->renderWith(
+			$template,
+			array(
+				'ListID' => $listId,
+				'SessionMessage' => Vision6FieldFactory::singleton()->getSessionMessage($listId),
+				'Form' => Vision6::singleton()->createForm('subscribe', $factory->build(), null, $factory->getRequired())
+			)
+		);
 	}
 
 
@@ -33,31 +42,6 @@ class Vision6PageControllerExtension extends Extension
         }
 
         return static::Vision6List($arguments['list_id']);
-    }
-
-
-
-    /**
-     * Gets the session container or creates it if it doesn't exist.
-     *
-     * @return array|mixed|null|\Session
-     */
-    public function getSession()
-    {
-        return \Session::get('Vision6') ?: (\Session::set('Vision6', array())) ?: \Session::get('Vision6');
-    }
-
-    /**
-     * Sets the session container
-     *
-     * @param array $data
-     *
-     * @return void
-     */
-    public function setv6Session(array $data)
-    {
-        \Session::set('Vision6', $data);
-        \Session::save();
     }
 
 }
