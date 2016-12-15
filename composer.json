@@ -2,7 +2,7 @@
   "name": "steadlane/silverstripe-vision6",
   "description": "",
   "type": "silverstripe-module",
-  "version": "1.0.0-RC",
+  "version": "2.0.0-RC",
   "license": "BSD (3-Clause)",
   "authors": [
     {
@@ -19,7 +19,7 @@
   "minimum-stability": "dev",
   "extra": {
     "branch-alias": {
-      "dev-master": "0.x-dev"
+      "dev-master": "2.x-dev"
     },
     "installer-name": "vision6"
   },

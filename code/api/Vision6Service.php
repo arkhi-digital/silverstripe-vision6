@@ -3,7 +3,7 @@
 /**
  * Api wrapper class.
  */
-class Vision6Api
+class Vision6Api extends Object
 {
     protected $_api_key = FALSE;
     protected $_url     = 'http://www.vision6.com.au/api/jsonrpcserver';
@@ -18,7 +18,6 @@ class Vision6Api
 
     protected $_debug = FALSE;
 
-
     /**
      * Constructor
      *
@@ -31,13 +30,11 @@ class Vision6Api
      */
     public function __construct($version = '3.0')
     {
-        $config = Config::inst()->get("Vision6", "auth");
+        if (!defined('VISION6_API_KEY')) {
+			user_error('Vision6 API key has not been defined as constant!', E_USER_ERROR);
+		}
 
-        if (!is_array($config) || !array_key_exists("api_key", $config)) {
-            throw new \RuntimeException("Malf ormed or non-existent YML configuration. See vision6/code/_config/Vision6.yml");
-        }
-
-        $this->setAPIKey($config['api_key']);
+        $this->setAPIKey(VISION6_API_KEY);
 
         if (!extension_loaded('json') && (!function_exists('json_encode') || !function_exists('json_decode'))) {
             $module_prefix = (PHP_SHLIB_SUFFIX === 'dll') ? 'php_' : '';
@@ -48,6 +45,8 @@ class Vision6Api
         }
 
         $this->setVersion($version);
+
+		parent::__construct();
     }
 
 
