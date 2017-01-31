@@ -70,7 +70,7 @@ class Vision6PageController extends Page_Controller
         $payload = $this->normalizeFormData($form->getData());
         $listId = array_shift($payload);
 
-        $api->invokeMethod("subscribeContact", (int)$listId, $payload);
+        $api->callMethod("subscribeContact", (int)$listId, $payload);
 
         if ($api->hasError()) {
             // unsuccessful

@@ -2,35 +2,39 @@
 
 /**
  * Api wrapper class.
+ *
+ * @author Vision6
+ * @author Reece Alexander <reece@steadlane.com.au>
+ * @note I cleaned this up and applied it to the SilverStripe framework
  */
 class Vision6Api extends Object
 {
     /** @var bool */
-    protected $_api_key = false;
+    protected $apiKey = false;
 
     /** @var string */
-    protected $_url = 'http://www.vision6.com.au/api/jsonrpcserver';
+    protected $apirUrl = 'http://www.vision6.com.au/api/jsonrpcserver';
 
     /** @var string */
-    protected $_version = '';
+    protected $apiVersion = '';
 
     /** @var bool */
-    protected $_error_code = false;
+    protected $errorCode = false;
 
     /** @var bool */
-    protected $_error_message = false;
+    protected $errorMessage = false;
 
     /** @var int */
-    protected $_request_id = 1;
+    protected $requestId = 1;
 
     /** @var int */
-    protected $_timeout = 300;
+    protected $timeout = 300;
 
     /** @var array */
-    protected $_headers = array();
+    protected $headers = array();
 
     /** @var bool */
-    protected $_debug = false;
+    protected $debug = false;
 
     /**
      * Constructor
@@ -49,81 +53,36 @@ class Vision6Api extends Object
         }
 
         $this->setAPIKey(VISION6_API_KEY);
-
-        if (!extension_loaded('json') && (!function_exists('json_encode') || !function_exists('json_decode'))) {
-            $module_prefix = (PHP_SHLIB_SUFFIX === 'dll') ? 'php_' : '';
-            @dl($module_prefix . 'json.' . PHP_SHLIB_SUFFIX);
-            if (!extension_loaded('json')) {
-                die('Unable to load JSON module');
-            }
-        }
-
-        $this->setVersion($version);
+        $this->setApiVersion($version);
 
         parent::__construct();
     }
 
-
-    /**
-     * Customisable error handler called whenever the API returns an error.
-     *
-     * @param   string $method_name The name of the API method.
-     * @param   int $error_code The error code.
-     * @param   string $error_message The error message.
-     *
-     * @return  bool
-     */
-    public function handleError($method_name, $error_code, $error_message)
-    {
-        //
-        // :TODO: Add error handling code here...
-        //
-        // Change this to return false to handle errors in the calling code with Api::getErrorMessage() and Api::getErrorCode().
-        //
-        die($method_name . ': Error ' . $error_code . ': ' . $error_message . "\n");
-    }
-
-
-    /**
-     * Customisable request debug handler called when debug mode is enabled.
-     *
-     * @param   string $method_name The name of the API method.
-     * @param   int $data The serialized request/response data.
-     *
-     * @return  void
-     */
-    public function handleDebug($method_name, $data)
-    {
-
-    }
-
-
     /**
      * Call an API method.
      *
-     * @param  string $method_name Name of the API method to call.
-     * @param  mixed $param1,... Variable list of parameters to pass to the method.
+     * @param  string $methodName Name of the API method to call.
      *
      * @return mixed    Method result.
      */
-    public function invokeMethod($method_name /*, parameters ...*/)
+    public function callMethod($methodName /*, parameters ...*/)
     {
         $parameters = func_get_args();
 
-        return $this->_invokeMethod($this->_api_key, array_shift($parameters), $parameters);
+        return $this->invokeMethod($this->apiKey, array_shift($parameters), $parameters);
     }
 
     /**
      * Call an API method.
      *
-     * @param   string $method_name Name of the API method to call.
+     * @param   string $methodName Name of the API method to call.
      * @param   array $parameters An array of parameters to pass to the method.
      *
      * @return  mixed   Method result.
      */
-    public function __call($method_name, $parameters)
+    public function __call($methodName, $parameters)
     {
-        return $this->_invokeMethod($this->_api_key, $method_name, $parameters);
+        return $this->invokeMethod($this->apiKey, $methodName, $parameters);
     }
 
 
@@ -134,7 +93,7 @@ class Vision6Api extends Object
      *
      * @return  void
      */
-    public function setUrl($url)
+    public function setApirUrl($url)
     {
         // Add API version to url
         $parts = @parse_url($url);
@@ -150,11 +109,11 @@ class Vision6Api extends Object
             if (isset($parts['query'])) {
                 parse_str($parts['query'], $query);
             }
-            $query['version'] = $this->_version;
+            $query['version'] = $this->apiVersion;
             $url .= '?' . http_build_query($query);
         }
 
-        $this->_url = trim($url);
+        $this->apirUrl = trim($url);
     }
 
     /**
@@ -162,9 +121,9 @@ class Vision6Api extends Object
      *
      * @return  string
      */
-    public function getUrl()
+    public function getApiUrl()
     {
-        return $this->_url;
+        return $this->apirUrl;
     }
 
 
@@ -177,7 +136,7 @@ class Vision6Api extends Object
      */
     public function setAPIKey($key)
     {
-        $this->_api_key = $key;
+        $this->apiKey = $key;
     }
 
     /**
@@ -187,21 +146,21 @@ class Vision6Api extends Object
      */
     public function getAPIKey()
     {
-        return $this->_api_key;
+        return $this->apiKey;
     }
 
 
     /**
      * Set the API version to use when making requests.
      *
-     * @param   string $version_string The version of the API to use.
+     * @param   string $versionString The version of the API to use.
      *
      * @return  void
      */
-    public function setVersion($version_string)
+    public function setApiVersion($versionString)
     {
-        $this->_version = $version_string;
-        $this->setUrl($this->_url); // update url
+        $this->apiVersion = $versionString;
+        $this->setApirUrl($this->apirUrl); // update url
     }
 
     /**
@@ -209,9 +168,9 @@ class Vision6Api extends Object
      *
      * @return  string
      */
-    public function getVersion()
+    public function getApiVersion()
     {
-        return $this->_version;
+        return $this->apiVersion;
     }
 
 
@@ -224,7 +183,7 @@ class Vision6Api extends Object
      */
     public function setTimeout($seconds)
     {
-        $this->_timeout = $seconds;
+        $this->timeout = $seconds;
     }
 
     /**
@@ -234,20 +193,20 @@ class Vision6Api extends Object
      */
     public function getTimeout()
     {
-        return $this->_timeout;
+        return $this->timeout;
     }
 
 
     /**
      * Set additional HTTP headers to send when making requests.
      *
-     * @param   array $headers_array An array of HTTP headers.
+     * @param   array $headersArray An array of HTTP headers.
      *
      * @return  void
      */
-    public function setHeaders($headers_array)
+    public function setHeaders($headersArray)
     {
-        $this->_headers = $headers_array;
+        $this->headers = $headersArray;
     }
 
     /**
@@ -257,7 +216,7 @@ class Vision6Api extends Object
      */
     public function getHeaders()
     {
-        return $this->_headers;
+        return $this->headers;
     }
 
     /**
@@ -267,7 +226,7 @@ class Vision6Api extends Object
      */
     public function hasError()
     {
-        return !($this->_error_code) ? false : true;
+        return !($this->errorCode) ? false : true;
     }
 
     /**
@@ -277,7 +236,7 @@ class Vision6Api extends Object
      */
     public function getErrorCode()
     {
-        return $this->_error_code;
+        return $this->errorCode;
     }
 
     /**
@@ -287,7 +246,7 @@ class Vision6Api extends Object
      */
     public function getErrorMessage()
     {
-        return $this->_error_message;
+        return $this->errorMessage;
     }
 
 
@@ -300,7 +259,7 @@ class Vision6Api extends Object
      */
     public function setDebug($enabled)
     {
-        $this->_debug = $enabled;
+        $this->debug = $enabled;
     }
 
     /**
@@ -310,70 +269,66 @@ class Vision6Api extends Object
      */
     public function getDebug()
     {
-        return $this->_debug;
+        return $this->debug;
     }
 
 
     /**
      * Perform an API method request.
      *
-     * @param   string $api_key The API key to use for the request.
-     * @param   string $method_name The name of the API method.
+     * @param   string $apiKey The API key to use for the request.
+     * @param   string $methodName The name of the API method.
      * @param   array $parameters An array of parameters to pass to the method.
      *
      * @return  mixed   Returns the method result on success.
      */
-    protected function _invokeMethod($api_key, $method_name, $parameters)
+    protected function invokeMethod($apiKey, $methodName, $parameters)
     {
-        $this->_error_code = false;
-        $this->_error_message = false;
+        $this->errorCode = false;
+        $this->errorMessage = false;
 
-        if ($api_key) {
+        if ($apiKey) {
             // API key is the first method parameter
-            array_unshift($parameters, $api_key);
+            array_unshift($parameters, $apiKey);
         }
 
         // Encode the request
-        $request_id = $this->_request_id++;
+        $requestId = $this->requestId++;
         $request = array(
-            'id' => $request_id,
-            'method' => $method_name,
+            'id' => $requestId,
+            'method' => $methodName,
             'params' => $parameters
         );
 
-        $encoded_request = json_encode($request);
-        $this->_debug($method_name, $encoded_request);
-
         // Send the request and read the response
-        $encoded_response = $this->_postRequest($method_name, $encoded_request);
-        $this->_debug($method_name, $encoded_response);
+        $encodedResponse = $this->postRequest($methodName, json_encode($request));
+
 
         // Decode response
-        $response = json_decode($encoded_response, true);
+        $response = json_decode($encodedResponse, true);
         if ($response) {
             if (isset($response['result'])) {
-                if ($method_name == 'login') { // deprecated, use API keys instead
-                    $this->setUrl($response['result']);
+                if ($methodName == 'login') { // deprecated, use API keys instead
+                    $this->setApirUrl($response['result']);
                 }
 
                 return $response['result'];
-            } 
-            elseif (isset($response['error'])) {
-                $error_code = (isset($response['error']['code']) ? $response['error']['code'] : '?');
-                $error_message = (isset($response['error']['message']) ? $response['error']['message'] : 'Unknown Error');
+            } elseif (isset($response['error'])) {
+                $errorCode = (isset($response['error']['code']) ? $response['error']['code'] : '?');
+                $errorMessage = (isset($response['error']['message']) ? $response['error']['message'] : 'Unknown Error');
                 if (is_string($response['error'])) {
                     if (preg_match('/^(\d+)\-(.*)/', $response['error'], $matches)) {
-                        $error_code = intval($matches[1]);
-                        $error_message = trim($matches[2]);
+                        $errorCode = intval($matches[1]);
+                        $errorMessage = trim($matches[2]);
                     }
                 }
-                $this->_error($method_name, $error_code, $error_message);
+                $this->error($methodName, $errorCode, $errorMessage);
 
                 return false;
             }
         }
 
-        $this->_error($method_name, 6, 'Invalid server response');
+        $this->error($methodName, 6, 'Invalid server response');
 
         return false;
     }
@@ -381,69 +336,68 @@ class Vision6Api extends Object
     /**
      * Post an API method request.
      *
-     * @param   string $method_name The name of the API method.
-     * @param   array $post_data The serialized method request.
+     * @param   string $methodName The name of the API method.
+     * @param   string $postData The serialized method request.
      *
      * @return  mixed   Returns the serialized response on success.
      */
-    protected function _postRequest($method_name, $post_data)
+    protected function postRequest($methodName, $postData)
     {
         // Build request headers
         $headers = array(
             'Content-Type: application/json',
-            'Content-Length: ' . strlen($post_data)
+            'Content-Length: ' . strlen($postData)
         );
-        $headers = array_merge($headers, $this->_headers);
+        $headers = array_merge($headers, $this->headers);
 
-        // Create stream context
-        $context_options = array(
-            'http' => array(
-                'method' => 'POST',
-                'user_agent' => 'JSON-RPC PHP Wrapper',
-                'header' => $headers,
-                'content' => $post_data,
-                'timeout' => $this->getTimeout(),
+        $context = stream_context_create(
+            array(
+                'http' => array(
+                    'method' => 'POST',
+                    'user_agent' => 'JSON-RPC PHP Wrapper',
+                    'header' => $headers,
+                    'content' => $postData,
+                    'timeout' => $this->getTimeout(),
+                )
             )
         );
 
-        $context = stream_context_create($context_options);
-
         // Connect and send the request
-        $fp = @fopen($this->getUrl(), 'rb', false, $context);
+        $fp = @fopen($this->getApiUrl(), 'rb', false, $context);
         if (!$fp) {
-            $this->_error($method_name, 2, 'Unable to connect to ' . $this->getUrl());
+            $this->error($methodName, 2, 'Unable to connect to ' . $this->getApiUrl());
 
             return false;
         }
 
         // Read the response
         $response = stream_get_contents($fp);
-        $meta_data = stream_get_meta_data($fp);
+        $metaData = stream_get_meta_data($fp);
         fclose($fp);
 
-        if ($meta_data['timed_out']) {
-            $this->_error($method_name, 3, 'Connection timed out');
+        if ($metaData['timed_out']) {
+            $this->error($methodName, 3, 'Connection timed out');
 
             return false;
         }
 
         if ($response === false) {
-            $this->_error($method_name, 4, 'Error occurred while reading from socket');
+            $this->error($methodName, 4, 'Error occurred while reading from socket');
         }
 
-        $last_status = false;
-        foreach ($meta_data['wrapper_data'] as $line) {
+        $lastStatus = false;
+        foreach ($metaData['wrapper_data'] as $line) {
             if (substr($line, 0, 5) == 'HTTP/') {
-                $last_status = explode(' ', $line, 3);
+                $lastStatus = explode(' ', $line, 3);
             }
         }
 
-        if (!$last_status || count($last_status) != 3) {
-            $this->_error($method_name, 5, 'Invalid server response');
+        if (!$lastStatus || count($lastStatus) != 3) {
+            $this->error($methodName, 5, 'Invalid server response');
 
             return false;
-        } else if ($last_status[1] != 200) {
-            $this->_error($method_name, 5, $last_status[1] . ' ' . substr($last_status[2], 0, strpos($last_status[2], "\r\n")));
+        } elseif ($lastStatus[1] != 200) {
+            $this->error($methodName, 5, $lastStatus[1] . ' ' . substr($lastStatus[2], 0, strpos($lastStatus[2], "\r\n")));
 
             return false;
         }
@@ -454,31 +408,16 @@ class Vision6Api extends Object
     /**
      * Invokes the error handler.
      *
-     * @param   string $method_name The name of the API method.
-     * @param   int $error_code The error code.
-     * @param   string $error_message The error message.
+     * @param   string $methodName The name of the API method.
+     * @param   int $errorCode The error code.
+     * @param   string $errorMessage The error message.
      *
      * @return  void
      */
-    protected function _error($method_name, $error_code, $error_message)
+    protected function error($methodName, $errorCode, $errorMessage)
     {
-        $this->_error_code = $error_code;
-        $this->_error_message = $error_message;
-        $this->handleError($method_name, $error_code, $error_message);
+        $this->errorCode = $errorCode;
+        $this->errorMessage = $methodName . " : " . $errorMessage;
     }
 
-    /**
-     * Invokes the debug handler.
-     *
-     * @param   string $method_name The name of the API method.
-     * @param   string $data The serialized request/response data.
-     *
-     * @return  void
-     */
-    protected function _debug($method_name, $data)
-    {
-        if ($this->getDebug()) {
-            $this->handleDebug($method_name, $data);
-        }
-    }
 }

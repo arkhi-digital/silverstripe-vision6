@@ -26,7 +26,7 @@ class Vision6 extends Object
     public function isEmailInList($listId, $emailAddress)
     {
         $api = Vision6Api::create();
-        $contacts = $api->invokeMethod(
+        $contacts = $api->callMethod(
             'searchContacts',
             $listId,
             array(

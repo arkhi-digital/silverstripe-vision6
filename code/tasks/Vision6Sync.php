@@ -27,8 +27,7 @@ class Vision6Sync extends BuildTask
     public function syncLists()
     {
         $api = new Vision6Api();
-        $lists = $api->invokeMethod("searchLists");
-        //$fields = $api->invokeMethod("searchFields", 368655);
+        $lists = $api->callMethod("searchLists");
 
         foreach ($lists as $list) {
 
@@ -57,10 +56,10 @@ class Vision6Sync extends BuildTask
     public function syncFields()
     {
         $api = new Vision6Api();
-        $lists = $api->invokeMethod("searchLists");
+        $lists = $api->callMethod("searchLists");
 
         foreach ($lists as $list) {
-            $fields = $api->invokeMethod("searchFields", $list['id']);
+            $fields = $api->callMethod("searchFields", $list['id']);
 
             foreach ($fields as $field) {
 
