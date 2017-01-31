@@ -15,9 +15,6 @@
     "silverstripe/cms": "^3.4.0",
     "silverstripe/framework": "^3.4.0"
   },
-  "suggest": {
-    "steadlane/vision6popup": "Create engaging popup modals populated with a vision6 form"
-  },
   "minimum-stability": "dev",
   "extra": {
     "branch-alias": {
