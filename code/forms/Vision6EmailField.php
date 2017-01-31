@@ -5,7 +5,7 @@
  *
  * @author Reece Alexander <reece@steadlane.com.au>
  */
-class Vision6EmailField extends TextField
+class Vision6EmailField extends EmailField
 {
     public function validate($validator)
     {
