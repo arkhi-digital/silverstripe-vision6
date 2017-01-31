@@ -17,36 +17,6 @@ class Vision6 extends Object
     }
 
     /**
-     * @param $name
-     * @param FieldList $fields
-     * @param FieldList|null $actions
-     * @param Validator|null $validator
-     *
-     * @return Form
-     */
-    public function createForm($name, FieldList $fields, FieldList $actions = null, Validator $validator = null)
-    {
-        if (!$actions) {
-            $actions = FieldList::create(
-                array(
-                    FormAction::create('subscribe', 'Subscribe')->setUseButtonTag(true)
-                )
-            );
-        }
-
-        $form = Form::create(new Vision6PageController(), $name, $fields, $actions, $validator);
-
-        if ($form->hasExtension('FormSpamProtectionExtension')) {
-            $form->enableSpamProtection();
-        }
-
-        $this->extend('updateForm', $form);
-
-        return $form;
-    }
-
-
-    /**
      * Checks to see if the email is already in the Vision6 List
      * @param $listId
      * @param $emailAddress
