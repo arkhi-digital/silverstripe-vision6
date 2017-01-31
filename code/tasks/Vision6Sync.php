@@ -1,21 +1,16 @@
 <?php
 
-class Vision6Sync extends BuildTask {
+/**
+ * Class Vision6Sync
+ */
+class Vision6Sync extends BuildTask
+{
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $title = "Synchronize Vision6 Lists/Fields";
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $description = "Syncs the local database with lists/fields from Vision6 API, will modify if already exists and create if doesn't";
-
-    /**
-     * @var bool
-     */
-    protected $enabled = TRUE;
 
     /**
      * @param $request
@@ -26,7 +21,11 @@ class Vision6Sync extends BuildTask {
         $this->syncFields();
     }
 
-    public function syncLists() {
+    /**
+     * Sync Lists
+     */
+    public function syncLists()
+    {
         $api = new Vision6Api();
         $lists = $api->invokeMethod("searchLists");
         //$fields = $api->invokeMethod("searchFields", 368655);
@@ -51,7 +50,12 @@ class Vision6Sync extends BuildTask {
             $record->write();
         }
     }
-    public function syncFields() {
+
+    /**
+     * Sync Fields For Lists
+     */
+    public function syncFields()
+    {
         $api = new Vision6Api();
         $lists = $api->invokeMethod("searchLists");
 
@@ -62,7 +66,7 @@ class Vision6Sync extends BuildTask {
 
                 $record = \Vision6Field::get()->filter(
                     array(
-                        "FieldID" => $field[ 'id' ]
+                        "FieldID" => $field['id']
                     )
                 )->first();
 
@@ -70,24 +74,25 @@ class Vision6Sync extends BuildTask {
                     $record = \Vision6Field::create();
                 }
 
-                $record->FieldID          = $field[ 'id' ];
-                $record->Name             = $field[ 'name' ];
-                $record->Type             = $field[ 'type' ];
-                $record->IsMandatory      = (int)$field[ 'is_mandatory' ];
-                $record->ShowInForm       = (int)$field[ 'show_in_form' ];
-                $record->Length           = $field[ 'length' ];
-                $record->Size             = $field[ 'size' ];
-                $record->RowSize          = $field[ 'row_size' ];
-                $record->DefaultValue     = $field[ 'default_value' ];
-                $record->ValuesArray      = $field[ 'values_array' ];
-                $record->DefaultsArray    = $field[ 'defaults_array' ];
-                $record->AllowedFileTypes = $field[ 'allowed_file_types' ];
-                $record->AddressType      = $field[ 'address_type' ];
-                $record->TimeFormat       = $field[ 'time_format' ];
-                $record->DateValidation   = $field[ 'date_validation' ];
-                $record->DisplayOrder     = $field[ 'display_order' ];
+                $record->FieldID = $field['id'];
+                $record->Name = $field['name'];
+                $record->Type = $field['type'];
+                $record->IsMandatory = (int)$field['is_mandatory'];
+                $record->ShowInForm = (int)$field['show_in_form'];
+                $record->Length = $field['length'];
+                $record->Size = $field['size'];
+                $record->RowSize = $field['row_size'];
+                $record->DefaultValue = $field['default_value'];
+                $record->ValuesArray = $field['values_array'];
+                $record->DefaultsArray = $field['defaults_array'];
+                $record->AllowedFileTypes = $field['allowed_file_types'];
+                $record->AddressType = $field['address_type'];
+                $record->TimeFormat = $field['time_format'];
+                $record->DateValidation = $field['date_validation'];
+                $record->DisplayOrder = $field['display_order'];
                 $record->write();
 
+                /** @var Vision6List $listRecord */
                 $listRecord = \Vision6List::get()->filter(
                     array(
                         "ListID" => $field['list_id']
@@ -95,8 +100,6 @@ class Vision6Sync extends BuildTask {
                 )->first();
 
                 $listRecord->Fields()->add($record);
-
-
             }
         }
     }

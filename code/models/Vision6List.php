@@ -1,6 +1,17 @@
 <?php
 
-class Vision6List extends DataObject {
+/**
+ * Class Vision6List
+ *
+ * @author Reece Alexander <reece@steadlane.com.au>
+ *
+ * @property int ListID
+ * @property string Name
+ * @property int FileFolderID
+ * @method DataList Fields
+ */
+class Vision6List extends DataObject
+{
     protected static $db = array(
         "ListID" => "Int",
         "Name" => "Varchar(200)",
