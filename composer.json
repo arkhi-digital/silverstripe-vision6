@@ -1,8 +1,7 @@
 {
-  "name": "steadlane/silverstripe-vision6",
-  "description": "",
+  "name": "steadlane/vision6",
+  "description": "A form generator for Vision6 mailing lists",
   "type": "silverstripe-module",
-  "version": "2.0.0-RC",
   "license": "BSD (3-Clause)",
   "authors": [
     {
@@ -15,18 +14,14 @@
     "silverstripe/cms": "^3.4.0",
     "silverstripe/framework": "^3.4.0"
   },
+  "suggest": {
+    "steadlane/vision6popup": "Create engaging popup modals populated with a vision6 form"
+  },
   "prefer-stable": true,
   "minimum-stability": "dev",
   "extra": {
     "branch-alias": {
       "dev-master": "2.x-dev"
-    },
-    "installer-name": "vision6"
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/steadlane/silverstripe-vision6"
     }
-  ]
+  }
 }
