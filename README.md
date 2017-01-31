@@ -35,6 +35,9 @@ $Vision6List(<<<YOUR LIST ID>>>);
 
 **Note**: Change `<<<YOUR LIST ID>>>` to the ID of the form you want to display. See [Finding my List ID](#finding-my-list-id)
 
+## Caveat
+Due to the way forms are being generated dynamically, and in order to maintain the functionality provided by `Form` you may only have one list per page. Having more will lead to validation issues and data handling issues. If you feel you can eliminate this caveat then we implore you to submit a PR
+
 ## Finding my List ID
 
 1. Login to Vision6 dashboard and select "Lists and Forms" from the side menu
