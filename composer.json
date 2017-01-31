@@ -6,22 +6,22 @@
   "authors": [
     {
       "name": "Reece Alexander",
-      "email": "reece@steadlane.com.au"
+      "email": "reece@steadlane.com.au",
+      "role": "Maintainer"
     }
   ],
   "require": {
-    "php": ">=5.3.3,<7",
+    "php": ">=5.3,<7",
     "silverstripe/cms": "^3.4.0",
     "silverstripe/framework": "^3.4.0"
   },
   "suggest": {
     "steadlane/vision6popup": "Create engaging popup modals populated with a vision6 form"
   },
-  "prefer-stable": true,
   "minimum-stability": "dev",
   "extra": {
     "branch-alias": {
-      "dev-master": "2.x-dev"
+      "dev-master": "1.x-dev"
     }
   }
 }
