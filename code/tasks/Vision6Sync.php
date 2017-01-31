@@ -1,17 +1,16 @@
 <?php
 
-class Vision6SyncFields extends BuildTask
-{
+class Vision6Sync extends BuildTask {
 
     /**
      * @var string
      */
-    protected $title = "Synchronize Vision6 Fields for Lists";
+    protected $title = "Synchronize Vision6 Lists/Fields";
 
     /**
      * @var string
      */
-    protected $description = "Syncs the local database with the fields for each list from Vision6 API, will modify if already exists and create if doesn't";
+    protected $description = "Syncs the local database with lists/fields from Vision6 API, will modify if already exists and create if doesn't";
 
     /**
      * @var bool
@@ -23,6 +22,36 @@ class Vision6SyncFields extends BuildTask
      */
     public function run($request)
     {
+        $this->syncLists();
+        $this->syncFields();
+    }
+
+    public function syncLists() {
+        $api = new Vision6Api();
+        $lists = $api->invokeMethod("searchLists");
+        //$fields = $api->invokeMethod("searchFields", 368655);
+
+        foreach ($lists as $list) {
+
+            $record = \Vision6List::get()->filter(
+                array(
+                    "ListID" => $list['id']
+                )
+            )->first();
+
+            if (!$record) {
+                $record = \Vision6List::create();
+            }
+
+
+            $record->ListID = $list['id'];
+            $record->FileFolderID = $list['folder_id'];
+            $record->Name = $list['name'];
+
+            $record->write();
+        }
+    }
+    public function syncFields() {
         $api = new Vision6Api();
         $lists = $api->invokeMethod("searchLists");
 
