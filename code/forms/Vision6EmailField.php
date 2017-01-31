@@ -1,16 +1,24 @@
 <?php
 
-class Vision6EmailField extends TextField {
+/**
+ * Class Vision6EmailField
+ *
+ * @author Reece Alexander <reece@steadlane.com.au>
+ */
+class Vision6EmailField extends TextField
+{
+    public function validate($validator)
+    {
+        $listId = $this->getForm()->Fields()->fieldByName('ListID')->Value();
 
-	public function validate($validator)
-	{
-		$exists = $this->request->postVar('ListID');
+        if (Vision6::singleton()->isEmailInList($listId, $this->value)) {
+            $validator->validationError(
+                $this->name, "That email is already subscribed", "validation"
+            );
 
-		$validator->validationError(
-			$this->name, "Not a number. This must be between 2 and 5", "validation"
-		);
+            return false;
+        }
 
-		return false;
-	}
-
+        return true;
+    }
 }
