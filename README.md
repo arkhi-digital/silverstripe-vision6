@@ -1,6 +1,8 @@
 # silverstripe-vision6
 
-[![Code Climate](https://codeclimate.com/repos/57f6ec60f9006330840001dd/badges/8d68080d714c444027e1/gpa.svg)](https://codeclimate.com/repos/57f6ec60f9006330840001dd/feed)
+[![Code Climate](https://codeclimate.com/github/steadlane/silverstripe-vision6/badges/gpa.svg)](https://codeclimate.com/github/steadlane/silverstripe-vision6)
+[![Latest Stable Version](https://poser.pugx.org/steadlane/vision6/version)](https://packagist.org/packages/steadlane/vision6)
+[![License](https://poser.pugx.org/steadlane/vision6/license)](https://packagist.org/packages/steadlane/vision6)
 
 ## Installation
 
