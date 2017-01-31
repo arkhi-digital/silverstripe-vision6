@@ -16,15 +16,12 @@ class Vision6PageControllerExtension extends Extension
      */
     public static function Vision6List($listId)
     {
-        $factory = Vision6FieldFactory::create();
-        $factory->setList($listId);
-
         return Page_Controller::singleton()->renderWith(
             'Vision6Form',
             array(
                 'ListID' => $listId,
                 'SessionMessage' => Vision6FieldFactory::singleton()->getSessionMessage($listId),
-                'Form' => Vision6::singleton()->createForm('subscribe', $factory->build(), null, $factory->getRequired())
+                'Form' => Vision6PageController::singleton()->getForm($listId)
             )
         );
     }
