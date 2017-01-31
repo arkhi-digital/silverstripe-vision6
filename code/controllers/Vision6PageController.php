@@ -4,7 +4,8 @@ class Vision6PageController extends Page_Controller
 {
     private static $allowed_actions = array(
         'index',
-        'subscribe'
+        'subscribe',
+        'getForm'
     );
 
     /**
@@ -16,9 +17,49 @@ class Vision6PageController extends Page_Controller
     }
 
     /**
-     * The default action for Vision6::singleton()->createForm()
+     * @param $listId
+     * @return Form
      */
-    public function subscribe()
+    public function getForm($listId)
+    {
+        if ($listId instanceof SS_HTTPRequest) {
+            // get last generated form
+            if (!isset($_SESSION['LastGeneratedV6Form'])) {
+                user_error('Woops', E_USER_ERROR);
+            }
+            $listId = $_SESSION['LastGeneratedV6Form'];
+        }
+
+        $factory = Vision6FieldFactory::create();
+        $factory->setList($listId);
+        $fields = $factory->build();
+        $validator = $factory->getRequired();
+
+        $actions = FieldList::create(
+            array(
+                FormAction::create('subscribe', 'Subscribe')->setUseButtonTag(true)
+            )
+        );
+
+        $form = Form::create($this, __FUNCTION__, $fields, $actions, $validator);
+
+        if ($form->hasExtension('FormSpamProtectionExtension')) {
+            $form->enableSpamProtection();
+        }
+
+        $this->extend('updateForm', $form);
+        $_SESSION['LastGeneratedV6Form'] = $listId;
+        return $form;
+    }
+
+    /**
+     * Form processor
+     *
+     * @param $data
+     * @param Form $form
+     * @return bool|SS_HTTPResponse
+     */
+    public function subscribe($data, Form $form)
     {
         if (!$this->request->isPOST()) {
             user_error('You have reached this page incorrectly, data must be posted.', E_USER_ERROR);
@@ -26,13 +67,8 @@ class Vision6PageController extends Page_Controller
 
         $api = Vision6Api::create();
 
-        $payload = $this->normalizeFormData($this->request->postVars());
+        $payload = $this->normalizeFormData($form->getData());
         $listId = array_shift($payload);
-
-        if ((isset($payload['Email']) && strlen($payload['Email'])) && Vision6::singleton()->isEmailInList($listId, $payload['Email'])) {
-            Vision6FieldFactory::singleton()->addSessionMessageFor($listId, 'That email is already subscribed');
-            return $this->redirectBack();
-        }
 
         $api->invokeMethod("subscribeContact", (int)$listId, $payload);
 
@@ -42,13 +78,13 @@ class Vision6PageController extends Page_Controller
                 user_error('There was an error: ' . $api->getErrorMessage(), E_USER_ERROR);
             }
 
-            Vision6FieldFactory::singleton()->addSessionMessageFor($listId, 'We have encountered an error and you have not been subscribed.');
+            $form->sessionMessage('We have encountered an error and you have not been subscribed.', 'bad');
             return $this->redirectBack();
         }
 
         if (!$api->hasError()) {
             // successful
-            Vision6FieldFactory::singleton()->addSessionMessageFor($listId, 'You have successfully subscribed to this mailing list');
+            $form->sessionMessage('You have successfully subscribed to this mailing list', 'good');
             return $this->redirectBack();
         }
 
@@ -63,7 +99,7 @@ class Vision6PageController extends Page_Controller
      */
     public function Link($action = null)
     {
-        return Director::baseURL() . "vision6" . (($action) ? "/" . $action : "");
+        return Controller::join_links(Director::baseURL(), 'vision6', $action);
     }
 
     /**
