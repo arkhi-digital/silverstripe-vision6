@@ -7,7 +7,7 @@
 This module only supports installation via composer:
 
 ```
-composer require steadlane/silverstripe-vision6
+composer require steadlane/vision6
 ```
 
 Run `/dev/build` afterwards for SilverStripe to become aware of this extension
