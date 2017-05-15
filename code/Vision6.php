@@ -63,4 +63,42 @@ class Vision6 extends Object
         \Session::set('Vision6', $data);
         \Session::save();
     }
+
+    /**
+     * @param $listId
+     * @param TextField|EmailField|string $fieldOrEmail
+     * @return bool
+     */
+    public static function subscribeEmail($listId, $fieldOrEmail)
+    {
+        $email = null;
+
+        if ($fieldOrEmail instanceof TextField) {
+            $email = $fieldOrEmail->Value();
+        }
+
+        if (is_string($fieldOrEmail)) {
+            $email = $fieldOrEmail;
+        }
+
+        if (!$email) {
+            user_error(
+                'An email address was not provided',
+                E_USER_ERROR
+            );
+        }
+
+        $api = Vision6Api::create();
+
+        $api->callMethod("subscribeContact", (int)$listId, array('Email' => $email));
+
+        if ($api->hasError()) {
+            user_error(
+                sprintf('An error occurred when attempting to subscribe %s to %s: %s', $email, $listId, $api->getErrorMessage()),
+                E_USER_WARNING
+            );
+        }
+
+        return (!$api->hasError());
+    }
 }
