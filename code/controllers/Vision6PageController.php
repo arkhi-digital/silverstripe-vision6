@@ -1,9 +1,14 @@
 <?php
 
+/**
+ * Class Vision6PageController
+ *
+ * @author Reece Alexander <reece@steadlane.com.au>
+ */
 class Vision6PageController extends Page_Controller
 {
+    /** @var array */
     private static $allowed_actions = array(
-        'index',
         'subscribe',
         'getForm'
     );
@@ -13,7 +18,11 @@ class Vision6PageController extends Page_Controller
      */
     public function index()
     {
-        Security::permissionFailure();
+        // Bad Request
+        return new SS_HTTPResponse(
+            'You have reached this page incorrectly.',
+            400
+        );
     }
 
     /**
@@ -24,16 +33,17 @@ class Vision6PageController extends Page_Controller
     {
         if ($listId instanceof SS_HTTPRequest) {
             // get last generated form
-            if (!isset($_SESSION['LastGeneratedV6Form'])) {
+            if (!Session::get('LastGeneratedV6Form')) {
                 user_error('Woops', E_USER_ERROR);
             }
-            $listId = $_SESSION['LastGeneratedV6Form'];
+
+            $listId = Session::get('LastGeneratedV6Form');
         }
 
         $factory = Vision6FieldFactory::create();
         $factory->setList($listId);
         $fields = $factory->build();
-        $validator = $factory->getRequired();
+        $validator = $factory->getRequiredValidator();
 
         $actions = FieldList::create(
             array(
@@ -48,7 +58,9 @@ class Vision6PageController extends Page_Controller
         }
 
         $this->extend('updateForm', $form);
-        $_SESSION['LastGeneratedV6Form'] = $listId;
+
+        Session::set('LastGeneratedV6Form', $listId);
+
         return $form;
     }
 
@@ -62,13 +74,23 @@ class Vision6PageController extends Page_Controller
     public function subscribe($data, Form $form)
     {
         if (!$this->request->isPOST()) {
-            user_error('You have reached this page incorrectly, data must be posted.', E_USER_ERROR);
+            // Bad Request
+            return new SS_HTTPResponse(
+                _t(
+                    'Vision6.BAD_REQUEST',
+                    'You have reached this page incorrectly.'
+                ),
+                400
+            );
         }
 
         $api = Vision6Api::create();
 
         $payload = $this->normalizeFormData($form->getData());
         $listId = array_shift($payload);
+
+        /** @var Vision6List $list */
+        $list = Vision6List::get()->filter('ListID', $listId)->first();
 
         $api->callMethod("subscribeContact", (int)$listId, $payload);
 
@@ -78,13 +100,30 @@ class Vision6PageController extends Page_Controller
                 user_error('There was an error: ' . $api->getErrorMessage(), E_USER_ERROR);
             }
 
-            $form->sessionMessage('We have encountered an error and you have not been subscribed.', 'bad');
+            $form->sessionMessage(
+                _t(
+                    'Vision6.SUBSCRIBE_ERROR',
+                    'An error has been encountered and you have not been subscribed!'
+                ),
+                'bad'
+            );
+
             return $this->redirectBack();
         }
 
         if (!$api->hasError()) {
             // successful
-            $form->sessionMessage('You have successfully subscribed to this mailing list', 'good');
+            $form->sessionMessage(
+                _t(
+                    'Vision6.SUBSCRIBE_SUCCESS',
+                    'You have successfully subscribed to {list_title}',
+                    'This is the message displayed when a user has been successfully subscribed',
+                    array(
+                        'list_title' => $list->Name
+                    )
+                ),
+                'good'
+            );
             return $this->redirectBack();
         }
 

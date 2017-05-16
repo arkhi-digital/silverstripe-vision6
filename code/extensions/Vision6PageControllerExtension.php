@@ -14,7 +14,7 @@ class Vision6PageControllerExtension extends Extension
      *
      * @return HTMLText
      */
-    public static function Vision6List($listId)
+    public static function getVision6List($listId)
     {
         return Page_Controller::singleton()->renderWith(
             'Vision6Form',
@@ -35,13 +35,13 @@ class Vision6PageControllerExtension extends Extension
      * @param null $tagName
      * @return HTMLText
      */
-    public static function ShortCodeVision6List($arguments, $content = null, $parser = null, $tagName = null)
+    public static function getShortCodeVision6List($arguments, $content = null, $parser = null, $tagName = null)
     {
         if (!array_key_exists('list_id', $arguments)) {
             user_error("list_id is missing from short code parameters", E_USER_ERROR);
         }
 
-        return static::Vision6List($arguments['list_id']);
+        return static::getVision6List($arguments['list_id']);
     }
 
 }

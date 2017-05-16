@@ -3,8 +3,9 @@
 /**
  * Class Vision6Sync
  */
-class Vision6Sync extends BuildTask
+class Vision6Sync extends BuildTask implements Flushable
 {
+    private static $is_flushing = false;
 
     /** @var string */
     protected $title = "Synchronize Vision6 Lists/Fields";
@@ -17,30 +18,33 @@ class Vision6Sync extends BuildTask
      */
     public function run($request)
     {
-        $this->syncLists();
-        $this->syncFields();
+        static::syncLists();
+        static::syncFields();
     }
 
     /**
      * Sync Lists
      */
-    public function syncLists()
+    public static function syncLists()
     {
+        if (static::$is_flushing && !defined('VISION6_API_KEY')) {
+            return;
+        }
+
         $api = new Vision6Api();
         $lists = $api->callMethod("searchLists");
 
         foreach ($lists as $list) {
 
-            $record = \Vision6List::get()->filter(
+            $record = Vision6List::get()->filter(
                 array(
                     "ListID" => $list['id']
                 )
             )->first();
 
             if (!$record) {
-                $record = \Vision6List::create();
+                $record = Vision6List::create();
             }
-
 
             $record->ListID = $list['id'];
             $record->FileFolderID = $list['folder_id'];
@@ -53,8 +57,12 @@ class Vision6Sync extends BuildTask
     /**
      * Sync Fields For Lists
      */
-    public function syncFields()
+    public static function syncFields()
     {
+        if (static::$is_flushing && !defined('VISION6_API_KEY')) {
+            return;
+        }
+
         $api = new Vision6Api();
         $lists = $api->callMethod("searchLists");
 
@@ -70,7 +78,7 @@ class Vision6Sync extends BuildTask
                 )->first();
 
                 if (!$record) {
-                    $record = \Vision6Field::create();
+                    $record = Vision6Field::create();
                 }
 
                 $record->FieldID = $field['id'];
@@ -92,7 +100,7 @@ class Vision6Sync extends BuildTask
                 $record->write();
 
                 /** @var Vision6List $listRecord */
-                $listRecord = \Vision6List::get()->filter(
+                $listRecord = Vision6List::get()->filter(
                     array(
                         "ListID" => $field['list_id']
                     )
@@ -103,4 +111,17 @@ class Vision6Sync extends BuildTask
         }
     }
 
+    /**
+     * This function is triggered early in the request if the "flush" query
+     * parameter has been set. Each class that implements Flushable implements
+     * this function which looks after it's own specific flushing functionality.
+     *
+     * @see FlushRequestFilter
+     */
+    public static function flush()
+    {
+        static::$is_flushing = true;
+        static::syncLists();
+        static::syncFields();
+    }
 }

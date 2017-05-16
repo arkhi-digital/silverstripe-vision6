@@ -5,6 +5,7 @@
  *
  * @author Vision6
  * @author Reece Alexander <reece@steadlane.com.au>
+ *
  * @note I cleaned this up and applied it to the SilverStripe framework
  */
 class Vision6Api extends Object
@@ -93,7 +94,7 @@ class Vision6Api extends Object
      *
      * @return  void
      */
-    public function setApirUrl($url)
+    public function setApiUrl($url)
     {
         // Add API version to url
         $parts = @parse_url($url);
@@ -160,7 +161,7 @@ class Vision6Api extends Object
     public function setApiVersion($versionString)
     {
         $this->apiVersion = $versionString;
-        $this->setApirUrl($this->apirUrl); // update url
+        $this->setApiUrl($this->apirUrl); // update url
     }
 
     /**
@@ -309,7 +310,7 @@ class Vision6Api extends Object
         if ($response) {
             if (isset($response['result'])) {
                 if ($methodName == 'login') { // deprecated, use API keys instead
-                    $this->setApirUrl($response['result']);
+                    $this->setApiUrl($response['result']);
                 }
 
                 return $response['result'];
@@ -322,8 +323,8 @@ class Vision6Api extends Object
                         $errorMessage = trim($matches[2]);
                     }
                 }
-                $this->error($methodName, $errorCode, $errorMessage);
 
+                $this->error($methodName, $errorCode, $errorMessage);
                 return false;
             }
         }
@@ -366,7 +367,6 @@ class Vision6Api extends Object
         $fp = @fopen($this->getApiUrl(), 'rb', false, $context);
         if (!$fp) {
             $this->error($methodName, 2, 'Unable to connect to ' . $this->getApiUrl());
-
             return false;
         }
 
@@ -377,7 +377,6 @@ class Vision6Api extends Object
 
         if ($metaData['timed_out']) {
             $this->error($methodName, 3, 'Connection timed out');
-
             return false;
         }
 
@@ -394,7 +393,6 @@ class Vision6Api extends Object
 
         if (!$lastStatus || count($lastStatus) != 3) {
             $this->error($methodName, 5, 'Invalid server response');
-
             return false;
         } elseif ($lastStatus[1] != 200) {
             $this->error($methodName, 5, $lastStatus[1] . ' ' . substr($lastStatus[2], 0, strpos($lastStatus[2], "\r\n")));

@@ -1,0 +1,11 @@
+---
+name: vision6
+---
+
+Page_Controller:
+  extensions:
+    - 'Vision6PageControllerExtension'
+
+Director:
+  rules:
+    'vision6': 'Vision6PageController'

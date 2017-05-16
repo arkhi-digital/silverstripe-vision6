@@ -21,4 +21,15 @@ class Vision6List extends DataObject
     protected static $many_many = array(
         "Fields" => "Vision6Field"
     );
+
+    /**
+     * Builds the FieldList for this Mailing List
+     *
+     * @return FieldList
+     */
+    public function getFields()
+    {
+        $factory = Vision6FieldFactory::create();
+        return $factory->setList($this->ListID)->build();
+    }
 }
