@@ -7,9 +7,15 @@
  */
 class Vision6EmailField extends EmailField
 {
+    /**
+     * @param Validator $validator
+     * @return bool
+     */
     public function validate($validator)
     {
-        $listId = $this->getForm()->Fields()->fieldByName('ListID')->Value();
+        /** @var HiddenField $listIdField */
+        $listIdField = $this->getForm()->Fields()->fieldByName('ListID');
+        $listId = $listIdField->Value();
 
         if (Vision6::singleton()->isEmailInList($listId, $this->value)) {
             $validator->validationError(

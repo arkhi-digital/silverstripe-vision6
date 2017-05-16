@@ -1,0 +1,10 @@
+en:
+  Vision6:
+    BAD_REQUEST: "You have reached this page incorrectly."
+    POST_ONLY: "You have reached this page incorrectly, data must be posted"
+    SUBSCRIBE_ERROR: "An error has been encountered and you have not been subscribed!"
+    SUBSCRIBE_DEV_ERROR: "An error occurred when attempting to subscribe {email} to {list_title}: {error}"
+    SUBSCRIBE_SUCCESS: "You have successfully subscribed to {list_title}"
+    LIST_NOT_FOUND: "The list with ID {list_id} could not be found, have you synced your lists yet?"
+    LIST_NOT_SET: "You must set the list with setList() before calling generateFields()"
+    FIELD_NOT_FOUND_IN_FORM: "The field {field_name} was not found in {form_name}"

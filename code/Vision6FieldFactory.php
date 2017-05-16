@@ -7,7 +7,6 @@
  */
 class Vision6FieldFactory extends Object
 {
-
     /** @var  Vision6List */
     protected $list;
 
@@ -30,7 +29,7 @@ class Vision6FieldFactory extends Object
             if (!$listFetch) {
                 user_error(
                     _t(
-                        'Vision6.ListIdNotFound',
+                        'Vision6.LIST_NOT_FOUND',
                         'The list with ID {list_id} could not be found, have you synced your lists yet?',
                         '',
                         array(
@@ -57,7 +56,7 @@ class Vision6FieldFactory extends Object
         if (!($this->list instanceof Vision6List)) {
             user_error(
                 _t(
-                    'Vision6.ListIdToBeSetFirst',
+                    'Vision6.LIST_NOT_SET',
                     'You must set the list with setList() before calling generateFields()'
                 ),
                 E_USER_ERROR
@@ -78,7 +77,7 @@ class Vision6FieldFactory extends Object
                     break;
 
                 case "comment": {
-                    $fields->push($this->textareaFieldFor($field));
+                    $fields->push($this->getTextareaFieldFor($field));
                 }
                     break;
 
@@ -89,7 +88,7 @@ class Vision6FieldFactory extends Object
                         break;
                     }
 
-                    $fields->push($this->checkboxFieldFor($field));
+                    $fields->push($this->getCheckboxFieldFor($field));
 
                 }
                     break;
@@ -175,7 +174,7 @@ class Vision6FieldFactory extends Object
      *
      * @return CheckboxField
      */
-    public function checkboxFieldFor(Vision6Field $field)
+    public function getCheckboxFieldFor(Vision6Field $field)
     {
         if ($field->Type != "checkbox") {
             user_error("Field \"{$field->Name}\" is a {$field->Type} field but was provided to ::checkboxFieldFor()", E_USER_ERROR);
@@ -198,7 +197,7 @@ class Vision6FieldFactory extends Object
      *
      * @return TextareaField
      */
-    public function textareaFieldFor(Vision6Field $field)
+    public function getTextareaFieldFor(Vision6Field $field)
     {
         if ($field->Type != "comment") {
             user_error("Field \"{$field->Name}\" is a {$field->Type} field but was provided to ::textareaFieldFor()", E_USER_ERROR);
@@ -217,7 +216,7 @@ class Vision6FieldFactory extends Object
      *
      * @return DropdownField
      */
-    public function dropdownFieldFor(Vision6Field $field)
+    public function getDropdownFieldFor(Vision6Field $field)
     {
         // havn't found a need for this yet
     }
@@ -237,9 +236,9 @@ class Vision6FieldFactory extends Object
     }
 
     /**
-     * @return RequiredFields
+     * @return RequiredFields|Validator
      */
-    public function getRequired()
+    public function getRequiredValidator()
     {
         $required = array();
 

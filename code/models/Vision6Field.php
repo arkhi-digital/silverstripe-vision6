@@ -4,6 +4,7 @@
  * Class Vision6Field
  *
  * @author Reece Alexander <reece@steadlane.com.au>
+ *
  * @property int FieldID
  * @property string Name
  * @property string Type

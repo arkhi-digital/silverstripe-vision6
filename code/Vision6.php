@@ -60,8 +60,8 @@ class Vision6 extends Object
      */
     public function setSession(array $data)
     {
-        \Session::set('Vision6', $data);
-        \Session::save();
+        Session::set('Vision6', $data);
+        Session::save();
     }
 
     /**
@@ -88,13 +88,25 @@ class Vision6 extends Object
             );
         }
 
-        $api = Vision6Api::create();
 
+        /** @var Vision6List $list */
+        $list = Vision6List::get()->filter('ListID', $listId)->first();
+
+        $api = Vision6Api::create();
         $api->callMethod("subscribeContact", (int)$listId, array('Email' => $email));
 
         if ($api->hasError()) {
             user_error(
-                sprintf('An error occurred when attempting to subscribe %s to %s: %s', $email, $listId, $api->getErrorMessage()),
+                _t(
+                    'Vision6.SUBSCRIBE_DEV_ERROR',
+                    'An error occurred when attempting to subscribe {email} to {list_title}: {error}',
+                    'The message that is logged when an error occurs while attempting to subscribe a user to a mailing list',
+                    array(
+                        'email' => $email,
+                        'list_title' => $list->Name,
+                        'error' => $api->getErrorMessage()
+                    )
+                ),
                 E_USER_WARNING
             );
         }

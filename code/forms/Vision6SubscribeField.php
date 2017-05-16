@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class Vision6SubscribeField
+ *
+ * This field is decoupled and can be used independently in any form
+ *
+ * @author Reece Alexander <reece@steadlane.com.au>
+ */
 class Vision6SubscribeField extends CheckboxField
 {
     /** @var int Vision6 List ID */
@@ -49,7 +56,8 @@ class Vision6SubscribeField extends CheckboxField
      * @param $listId
      * @return $this
      */
-    public function setListId($listId) {
+    public function setListId($listId)
+    {
         $this->listId = $listId;
 
         return $this;
@@ -62,7 +70,8 @@ class Vision6SubscribeField extends CheckboxField
      * @param $fieldName
      * @return $this
      */
-    public function setEmailFieldName($fieldName) {
+    public function setEmailFieldName($fieldName)
+    {
         $this->emailFieldName = $fieldName;
 
         return $this;
@@ -76,7 +85,8 @@ class Vision6SubscribeField extends CheckboxField
      * @param $bool
      * @return $this
      */
-    public function setGracefulReject($bool) {
+    public function setGracefulReject($bool)
+    {
         $this->gracefulReject = (bool)$bool;
 
         return $this;
@@ -96,7 +106,15 @@ class Vision6SubscribeField extends CheckboxField
 
         if (!$emailField) {
             user_error(
-                sprintf('The field %s was not found in %s', $this->emailFieldName, $form->getName()),
+                _t(
+                    'Vision6.FIELD_NOT_FOUND_IN_FORM',
+                    'The field {field_name} was not found in {form_name}',
+                    'The message that is displayed when the defined "Email" field is not found in the form',
+                    array(
+                        'field_name' => $this->emailFieldName,
+                        'form_name' => $form->getName()
+                    )
+                ),
                 E_USER_ERROR
             );
         }
