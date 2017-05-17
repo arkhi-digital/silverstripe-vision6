@@ -2,16 +2,18 @@
 
 /**
  * Class Vision6Sync
+ *
+ * @author Reece Alexander <reece@steadlane.com.au>
  */
 class Vision6Sync extends BuildTask implements Flushable
 {
     private static $is_flushing = false;
 
     /** @var string */
-    protected $title = "Synchronize Vision6 Lists/Fields";
+    protected $title = "Vision6: Synchronize Lists & Fields";
 
     /** @var string */
-    protected $description = "Syncs the local database with lists/fields from Vision6 API, will modify if already exists and create if doesn't";
+    protected $description = "Syncs the local database with lists & fields from Vision6 API, will modify if already exists and create if doesn't";
 
     /**
      * @param $request
