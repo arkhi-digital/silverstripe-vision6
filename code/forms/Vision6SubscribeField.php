@@ -99,12 +99,12 @@ class Vision6SubscribeField extends CheckboxField
     public function validate($validator)
     {
         $form = $this->getForm();
-        $fields = $form->Fields();
+        $data = $form->getData();
 
         /** @var TextField|EmailField $emailField */
-        $emailField = $fields->fieldByName($this->emailFieldName);
+        $email = $data[$this->emailFieldName];
 
-        if (!$emailField) {
+        if (!$email) {
             user_error(
                 _t(
                     'Vision6.FIELD_NOT_FOUND_IN_FORM',
@@ -119,16 +119,21 @@ class Vision6SubscribeField extends CheckboxField
             );
         }
 
-        $email = $emailField->Value();
+        if ($this->gracefulReject) {
+            return true;
+        }
 
         if (Vision6::singleton()->isEmailInList($this->listId, $email)) {
-            if (!$this->gracefulReject) {
-                $validator->validationError(
-                    $this->name, "That email is already subscribed", "validation"
-                );
+            $validator->validationError(
+                $this->name,
+                _t(
+                    'Vision6.SUBSCRIBE_ALREADY',
+                    'That email address has already been subscribed'
+                ),
+                "validation"
+            );
 
-                return false;
-            }
+            return false;
         }
 
         return true;
